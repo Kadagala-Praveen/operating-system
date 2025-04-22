@@ -7,7 +7,7 @@
 #include <string.h>
 #include <signal.h>
 
-// Global variables
+
 int cpu_usage = 0;
 long memory_free = 0;
 long memory_total = 0;
@@ -62,7 +62,7 @@ void* monitor_processes(void* arg) {
             i++;
         }
         fclose(fp);
-        usleep(1000000); // Update every second
+        usleep(1000000);
     }
     return NULL;
 }
@@ -84,16 +84,16 @@ void display_info() {
     refresh();
 }
 
-// Function to handle user input
+
 void handle_input(char input) {
     int pid;
     char command[256];
     if (input == 'q') {
-        // Quit the program
+        
         endwin();
         exit(0);
     } else if (input == 'k') {
-        // Kill a process (user will input the PID)
+        
         mvprintw(19, 1, "Enter PID to kill: ");
         refresh();
         echo();
@@ -104,7 +104,7 @@ void handle_input(char input) {
         system(command);
         noecho();
     } else if (input == 'p') {
-        // Suspend a process (user will input the PID)
+    
         mvprintw(19, 1, "Enter PID to suspend: ");
         refresh();
         echo();
@@ -117,31 +117,31 @@ void handle_input(char input) {
     }
 }
 
-// Main function
+
 int main() {
-    // Initialize ncurses
+    
     initscr();
     noecho();
     cbreak();
-    timeout(1000); // Non-blocking input
+    timeout(1000); 
 
-    // Create threads to monitor CPU, memory, and processes
+    
     pthread_t cpu_thread, memory_thread, process_thread;
     pthread_create(&cpu_thread, NULL, monitor_cpu, NULL);
     pthread_create(&memory_thread, NULL, monitor_memory, NULL);
     pthread_create(&process_thread, NULL, monitor_processes, NULL);
 
-    // Main loop for displaying information and handling user input
+    
     while (1) {
         display_info();
 
-        int ch = getch(); // Get user input
+        int ch = getch();
         if (ch != ERR) {
-            handle_input(ch); // Handle the input
+            handle_input(ch); 
         }
     }
 
-    // Clean up threads
+    
     pthread_join(cpu_thread, NULL);
     pthread_join(memory_thread, NULL);
     pthread_join(process_thread, NULL);
